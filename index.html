@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armonia</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="modal">
+    <div class="modal-content">
+      <h1>Armonia</h1>
+      <p class="version">v0.1.0</p>
+      <p>Compose harmonious color relationships.<br>Drag colors into slots to create balanced combinations.</p>
+      <div class="mode-selection">
+        <button onclick="startGame()" class="mode-btn active">Mode 1: Harmony</button>
+        <button class="mode-btn disabled" disabled>Mode 2: Coming Soon</button>
+      </div>
+    </div>
+  </div>
+
+  <h1 style="display:none;" id="game-title">Armonia</h1>
+  
+  <div class="container" style="display:none;" id="game">
+    <div class="palette" id="palette-left"></div>
+    
+    <div class="center-area">
+      <div class="color-space" id="colorSpace">
+        <div class="color-space-label hue">HUE →</div>
+        <div class="color-space-label lightness">LIGHTNESS</div>
+      </div>
+      <div class="dropzone" id="dropzone">
+        <div class="color-blend-overlay"></div>
+        <div class="slot" data-slot="0"></div>
+        <div class="slot" data-slot="1"></div>
+        <div class="slot" data-slot="2"></div>
+      </div>
+    </div>
+    
+    <div class="right-panel">
+      <div class="score-panel" id="score-panel">
+        <div class="stars" id="stars">
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+        </div>
+        <div class="score" id="score">0</div>
+        <div class="progress"><div class="progress-bar" id="progress"></div></div>
+        <div class="level-info">
+          <div>Level: <span id="level">1</span></div>
+          <div>Target: <span id="target">70</span></div>
+        </div>
+        <button onclick="showHint()" id="hintBtn" class="hint-btn">💡 Show Hint</button>
+        <button onclick="nextLevel()" id="nextBtn" disabled>Next Level</button>
+      </div>
+      <div class="palette" id="palette-right"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
