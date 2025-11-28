@@ -10,35 +10,37 @@
   <div id="modal">
     <div class="modal-content">
       <h1>Armonia</h1>
-      <p class="version">v0.3.2</p>
+      <p class="version">v0.4.0</p>
       <p>Compose harmonious color relationships.<br>Drag colors into slots to create balanced combinations.</p>
       <div class="mode-selection">
         <button onclick="startGame()" class="mode-btn active">Mode 1: Harmony</button>
-        <button class="mode-btn disabled" disabled>Mode 2: Coming Soon</button>
+        <button onclick="startSoundscape()" class="mode-btn">Mode 2: Soundscape</button>
+        <a href="harmony-guide.html" class="mode-btn" style="display: flex; align-items: center; justify-content: center; text-decoration: none;">📚 Color Harmony Guide</a>
       </div>
     </div>
   </div>
 
   <h1 style="display:none;" id="game-title">Armonia</h1>
+  <button class="back-to-menu" style="display:none;" id="backToMenuBtn" onclick="backToMenu()">← Menu</button>
+  
+  <!-- Art mode selector in top left -->
+  <div class="art-mode-container" style="display:none;" id="artModeContainer">
+    <select id="artMode" class="art-mode-select">
+      <option value="pixels">Pixel Drift</option>
+      <option value="gradient">Gradient Blend</option>
+      <option value="strata">Strata</option>
+      <option value="weave">Weave</option>
+      <option value="flow">Flow Field</option>
+      <option value="constellation">Constellation</option>
+      <option value="ripples">Ripples</option>
+    </select>
+  </div>
+  
+  <!-- Background art canvas -->
+  <canvas id="generativeArt" class="generative-art-bg" style="display:none;"></canvas>
   
   <div class="container" style="display:none;" id="game">
     <div class="top-row">
-      <div class="left-panel">
-        <div class="palette-container">
-          <div class="palette" id="palette-left"></div>
-          <div class="palette" id="palette-right"></div>
-        </div>
-      </div>
-      
-      <div class="center-area">
-        <div class="dropzone" id="dropzone">
-          <div class="color-blend-overlay"></div>
-          <div class="slot" data-slot="0"></div>
-          <div class="slot" data-slot="1"></div>
-          <div class="slot" data-slot="2"></div>
-        </div>
-      </div>
-      
       <div class="right-panel">
       <div class="score-panel" id="score-panel">
         <div class="stars" id="stars">
@@ -53,7 +55,24 @@
           <div>Target: <span id="target">70</span></div>
         </div>
         <button onclick="showHint()" id="hintBtn" class="hint-btn">Show Solution</button>
-        <button onclick="nextLevel()" id="nextBtn" disabled>Next Level</button>
+      </div>
+    </div>
+    </div>
+    
+    <div class="left-panel">
+      <div class="palette-container">
+        <div class="palette" id="palette-left"></div>
+        <div class="palette" id="palette-right"></div>
+      </div>
+      
+      <div class="dropzone-container">
+        <div class="dropzone-hint">Build your harmony</div>
+        <div class="dropzone" id="dropzone">
+          <div class="color-blend-overlay"></div>
+          <div class="slot" data-slot="0"></div>
+          <div class="slot" data-slot="1"></div>
+          <div class="slot" data-slot="2"></div>
+        </div>
       </div>
       <div class="color-viz" id="colorViz">
         <svg viewBox="0 0 200 200" class="color-wheel">
@@ -96,25 +115,58 @@
         </svg>
       </div>
     </div>
-    </div>
     
-    <div class="art-section">
-      <div class="art-controls">
-        <label for="artMode">Art Mode:</label>
-        <select id="artMode" class="art-mode-select">
-          <option value="pixels">Pixel Drift</option>
-          <option value="gradient">Gradient Blend</option>
-          <option value="strata">Strata</option>
-          <option value="weave">Weave</option>
-          <option value="flow">Flow Field</option>
-          <option value="constellation">Constellation</option>
-          <option value="ripples">Ripples</option>
-        </select>
-      </div>
-      <canvas id="generativeArt" class="generative-art"></canvas>
-    </div>
+    <button id="nextBtn" style="display: none;">Next Level →</button>
   </div>
 
   <script type="module" src="js/main.js"></script>
+  
+  <!-- Mode 2: Soundscape -->
+  <div class="soundscape-container" style="display:none;" id="soundscape">
+    <button class="back-to-menu" id="backToMenuBtnSoundscape" onclick="backToMenu()" style="display:block;">← Menu</button>
+    <div class="soundscape-header">
+      <h2>Soundscape</h2>
+      <p class="soundscape-subtitle">Move colors toward harmony • Watch noise become music</p>
+    </div>
+    
+    <div class="soundscape-main">
+      <div class="color-pickers">
+        <div class="picker-group">
+          <div class="color-picker-wrapper">
+            <div class="color-orb" id="orb1" style="background: #ff4444;"></div>
+            <input type="range" id="hue1" class="hue-slider" min="0" max="360" value="0">
+            <div class="picker-label">Voice 1</div>
+          </div>
+          <div class="color-picker-wrapper">
+            <div class="color-orb" id="orb2" style="background: #44ff44;"></div>
+            <input type="range" id="hue2" class="hue-slider" min="0" max="360" value="120">
+            <div class="picker-label">Voice 2</div>
+          </div>
+          <div class="color-picker-wrapper">
+            <div class="color-orb" id="orb3" style="background: #4444ff;"></div>
+            <input type="range" id="hue3" class="hue-slider" min="0" max="360" value="240">
+            <div class="picker-label">Voice 3</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="harmony-display">
+        <div class="harmony-meter">
+          <div class="meter-label">Dissonance</div>
+          <div class="meter-bar">
+            <div class="meter-fill" id="harmonyMeter"></div>
+          </div>
+          <div class="meter-label">Harmony</div>
+        </div>
+        <div class="harmony-type" id="harmonyType">Exploring...</div>
+      </div>
+      
+      <canvas id="soundscapeCanvas" class="soundscape-canvas"></canvas>
+    </div>
+    
+    <div class="soundscape-controls">
+      <button id="toggleSound" class="sound-btn">🔊 Sound On</button>
+    </div>
+  </div>
 </body>
 </html>

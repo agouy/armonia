@@ -21,6 +21,13 @@ export function computeHarmonyScore(colors) {
   // Rules - only award ONE primary harmony type
   let primaryHarmonyFound = false;
   
+  // Monochromatic (same or very similar hues) - PERFECT HARMONY
+  if (!primaryHarmonyFound && diffs.every(d => d <= 15)) {
+    score += 50;
+    primaryHarmonyFound = true;
+    rulesMatched++;
+  }
+  
   // Complementary (highest priority for 2-3 colors)
   if (!primaryHarmonyFound && diffs.some(d => Math.abs(d - 180) <= 20)) {
     score += 35;

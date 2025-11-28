@@ -45,6 +45,18 @@ export function startGame() {
   gameEl.style.display = 'flex';
   gameTitleEl.style.display = 'block';
   scorePanelEl.style.display = 'flex';
+  
+  // Show back button
+  const backBtn = document.getElementById('backToMenuBtn');
+  if (backBtn) backBtn.style.display = 'block';
+  
+  // Show art mode container and background canvas
+  const artModeContainer = document.getElementById('artModeContainer');
+  if (artModeContainer) artModeContainer.style.display = 'block';
+  
+  const artCanvas = document.getElementById('generativeArt');
+  if (artCanvas) artCanvas.style.display = 'block';
+  
   particleSystem = new ParticleSystem(document.body);
   createUIElements();
   
@@ -53,6 +65,16 @@ export function startGame() {
   if (artModeSelect) {
     artModeSelect.addEventListener('change', updateArtMode);
   }
+  
+  // Add click handler to Next button
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      advanceToNextLevel();
+    });
+  }
+  
+  // Add resize listener for background canvas
+  window.addEventListener('resize', handleResize);
   
   nextLevel();
   resumeAudio();
@@ -94,6 +116,9 @@ function showComboNotification(harmony) {
     <div class="description">${harmony.description}</div>
   `;
   
+  // Add click handler to dismiss
+  notif.onclick = dismissComboNotification;
+  
   notif.classList.remove('show');
   backdrop.classList.remove('show');
   
@@ -114,29 +139,35 @@ function showComboNotification(harmony) {
   }, 50);
 }
 
+function handleResize() {
+  // Regenerate art on resize
+  const colors = getCurrentColors();
+  if (colors.length > 0) {
+    generateArt(colors);
+  }
+}
+
+function getCurrentColors() {
+  const colors = [];
+  slots.forEach(slot => {
+    const hex = rgbToHex(slot.style.backgroundColor);
+    if (hex) colors.push(hex);
+  });
+  return colors;
+}
+
 function generateArt(colors) {
   const canvas = document.getElementById('generativeArt');
   if (!canvas) return;
   
   // Don't generate if no colors provided
   if (!colors || colors.length === 0) {
-    canvas.classList.remove('show');
     return;
   }
   
-  // Show canvas first so we can get proper dimensions
-  canvas.classList.add('show');
-  
-  // Resize canvas to match container size
-  const rect = canvas.getBoundingClientRect();
-  if (rect.width === 0 || rect.height === 0) {
-    // Canvas not visible yet, try again after a short delay
-    setTimeout(() => generateArt(colors), 50);
-    return;
-  }
-  
-  canvas.width = rect.width;
-  canvas.height = rect.height;
+  // Resize canvas to full window size
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
   
   const ctx = canvas.getContext('2d');
   const width = canvas.width;
@@ -376,13 +407,7 @@ export function updateArtMode() {
     const hex = rgbToHex(slot.style.backgroundColor);
     if (hex) colors.push(hex);
   });
-  // Generate art even if no colors yet (will use default colors)
-  if (colors.length === 0) {
-    // Use default palette colors from level
-    if (levelData && levelData.sideColors) {
-      colors.push(...levelData.sideColors.slice(0, 3));
-    }
-  }
+  // Only generate art if colors have been placed
   if (colors.length > 0) {
     generateArt(colors);
   }
@@ -495,7 +520,154 @@ function createSwatch(color, palette, index) {
   swatch.dataset.palette = palette;
   swatch.dataset.paletteIndex = index;
   swatch.addEventListener('dragstart', handleDragStart);
+  
+  // Add touch support for mobile
+  addTouchListeners(swatch);
+  
   return swatch;
+}
+
+// Touch drag state
+let touchDragElement = null;
+let touchDragClone = null;
+let touchStartSlot = null;
+
+function addTouchListeners(element) {
+  element.addEventListener('touchstart', handleTouchStart, { passive: false });
+  element.addEventListener('touchmove', handleTouchMove, { passive: false });
+  element.addEventListener('touchend', handleTouchEnd, { passive: false });
+}
+
+function handleTouchStart(e) {
+  if (e.target.classList.contains('used')) return;
+  
+  e.preventDefault();
+  const touch = e.touches[0];
+  const target = e.target;
+  
+  touchDragElement = target;
+  touchStartSlot = target.dataset.slotIndex || null;
+  
+  // Create visual clone for dragging
+  touchDragClone = target.cloneNode(true);
+  touchDragClone.style.position = 'fixed';
+  touchDragClone.style.zIndex = '10000';
+  touchDragClone.style.pointerEvents = 'none';
+  touchDragClone.style.opacity = '0.9';
+  touchDragClone.style.transform = 'scale(1.1)';
+  touchDragClone.style.boxShadow = '0 8px 24px rgba(0,0,0,0.5)';
+  touchDragClone.style.width = target.offsetWidth + 'px';
+  touchDragClone.style.height = target.offsetHeight + 'px';
+  touchDragClone.style.left = (touch.clientX - target.offsetWidth / 2) + 'px';
+  touchDragClone.style.top = (touch.clientY - target.offsetHeight / 2) + 'px';
+  document.body.appendChild(touchDragClone);
+  
+  // Dim original
+  target.style.opacity = '0.3';
+  
+  playSound(400, 0.1, 'sine');
+}
+
+function handleTouchMove(e) {
+  if (!touchDragClone) return;
+  
+  e.preventDefault();
+  const touch = e.touches[0];
+  
+  touchDragClone.style.left = (touch.clientX - touchDragClone.offsetWidth / 2) + 'px';
+  touchDragClone.style.top = (touch.clientY - touchDragClone.offsetHeight / 2) + 'px';
+  
+  // Highlight slot under touch
+  const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+  slots.forEach(slot => slot.classList.remove('dragover'));
+  if (elementUnder && elementUnder.classList.contains('slot')) {
+    elementUnder.classList.add('dragover');
+  }
+}
+
+function handleTouchEnd(e) {
+  if (!touchDragElement || !touchDragClone) return;
+  
+  e.preventDefault();
+  const touch = e.changedTouches[0];
+  const color = touchDragElement.dataset.color;
+  
+  // Remove clone
+  touchDragClone.remove();
+  touchDragClone = null;
+  
+  // Restore original opacity
+  touchDragElement.style.opacity = '';
+  
+  // Find drop target
+  const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+  slots.forEach(slot => slot.classList.remove('dragover'));
+  
+  if (elementUnder && elementUnder.classList.contains('slot')) {
+    // Dropped on a slot
+    const targetSlot = elementUnder;
+    
+    // If dragging from another slot, clear that slot
+    if (touchStartSlot && touchStartSlot !== targetSlot.dataset.slot) {
+      const oldSlot = document.querySelector(`[data-slot="${touchStartSlot}"]`);
+      if (oldSlot) {
+        oldSlot.style.backgroundColor = '';
+        oldSlot.classList.remove('filled');
+        oldSlot.removeAttribute('draggable');
+        oldSlot.dataset.colorId = '';
+      }
+    }
+    
+    // Handle replaced color
+    const replacedColor = rgbToHex(targetSlot.style.backgroundColor);
+    if (replacedColor && replacedColor !== color) {
+      returnColorToPalette(replacedColor);
+      usedColors.delete(replacedColor);
+    }
+    
+    // Place color in slot
+    targetSlot.style.backgroundColor = color;
+    targetSlot.classList.add('filled');
+    targetSlot.draggable = true;
+    targetSlot.dataset.color = color;
+    targetSlot.dataset.slotIndex = targetSlot.dataset.slot;
+    targetSlot.dataset.colorId = color;
+    
+    usedColors.add(color);
+    
+    // Mark swatch as used
+    const swatches = document.querySelectorAll('.swatch');
+    swatches.forEach(swatch => {
+      if (swatch.dataset.color === color) {
+        swatch.classList.add('used');
+      }
+    });
+    
+    playSound(600, 0.15, 'sine');
+    updateHarmony();
+  } else if (touchStartSlot) {
+    // Dragged from slot to outside - remove from slot
+    const slot = document.querySelector(`[data-slot="${touchStartSlot}"]`);
+    if (slot) {
+      const slotColor = rgbToHex(slot.style.backgroundColor);
+      if (slotColor) {
+        returnColorToPalette(slotColor);
+        usedColors.delete(slotColor);
+      }
+      slot.style.backgroundColor = '';
+      slot.classList.remove('filled');
+      slot.removeAttribute('draggable');
+      slot.dataset.colorId = '';
+      delete slot.dataset.color;
+      delete slot.dataset.slotIndex;
+      
+      playSound(300, 0.2, 'sine');
+      updateHarmony();
+    }
+  }
+  
+  touchDragElement = null;
+  touchStartSlot = null;
 }
 
 function nextLevel() {
@@ -505,7 +677,7 @@ function nextLevel() {
   clearSlots();
   levelEl.textContent = levelData.level;
   targetEl.textContent = levelData.targetScore;
-  nextBtn.disabled = true;
+  nextBtn.style.display = 'none';
   prevScore = 0;
   
   bestSolution = findBestSolution(levelData.sideColors);
@@ -513,10 +685,11 @@ function nextLevel() {
   hintBtn.disabled = false;
   hintBtn.textContent = 'Show Solution';
   
-  // Hide generative art when starting new level
+  // Clear the background art when starting new level
   const canvas = document.getElementById('generativeArt');
   if (canvas) {
-    canvas.classList.remove('show');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   
   playSound(600, 0.3, 'triangle');
@@ -554,7 +727,7 @@ function clearSlots() {
     slot.dataset.colorId = '';
   });
   updateHarmony();
-  nextBtn.disabled = true;
+  nextBtn.style.display = 'none';
 }
 
 function handleDragStart(e) {
@@ -822,6 +995,7 @@ function updateHarmony() {
       playSound(880, 0.4, 'sine');
       playSound(660, 0.4, 'sine');
     }
+    nextBtn.style.display = 'block';
     nextBtn.disabled = false;
     scoreEl.style.color = '#4ECDC4';
   } else {
@@ -836,7 +1010,49 @@ slots.forEach(slot => {
   slot.addEventListener('drop', handleDrop);
   slot.addEventListener('dragstart', handleDragStart);
   slot.addEventListener('dragend', handleDragEnd);
+  
+  // Add touch support for slots
+  addTouchListeners(slot);
 });
+
+// Add drop handlers to palette containers for removing colors
+function handlePaletteDrop(e) {
+  e.preventDefault();
+  const fromSlotIndex = e.dataTransfer.getData('slotIndex');
+  
+  if (fromSlotIndex) {
+    const slot = document.querySelector(`[data-slot="${fromSlotIndex}"]`);
+    if (slot) {
+      const slotColor = rgbToHex(slot.style.backgroundColor);
+      if (slotColor) {
+        returnColorToPalette(slotColor);
+        usedColors.delete(slotColor);
+      }
+      slot.style.backgroundColor = '';
+      slot.classList.remove('filled');
+      slot.removeAttribute('draggable');
+      slot.dataset.colorId = '';
+      delete slot.dataset.color;
+      delete slot.dataset.slotIndex;
+      
+      playSound(300, 0.2, 'sine');
+      updateHarmony();
+    }
+  }
+}
+
+const paletteContainer = document.querySelector('.palette-container');
+if (paletteContainer) {
+  paletteContainer.addEventListener('dragover', handleDragOver);
+  paletteContainer.addEventListener('drop', handlePaletteDrop);
+}
+
+// Add drop handler to container background for removing colors
+const container = document.getElementById('game');
+if (container) {
+  container.addEventListener('dragover', handleDragOver);
+  container.addEventListener('drop', handlePaletteDrop);
+}
 
 export function advanceToNextLevel() {
   dismissComboNotification();

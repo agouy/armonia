@@ -22,6 +22,17 @@ export function detectHarmonyType(colors) {
   // Detect harmony types (in priority order)
   const harmonies = [];
   
+  // Monochromatic (same or very similar hues)
+  if (diffs.every(d => d <= 15)) {
+    harmonies.push({ 
+      type: 'monochromatic', 
+      name: 'Monochromatic',
+      emoji: '🎨',
+      description: 'Perfect unity through a single hue!',
+      points: 50
+    });
+  }
+  
   // Complementary
   if (diffs.some(d => Math.abs(d - 180) <= 20)) {
     harmonies.push({ 

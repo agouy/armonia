@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Harmony Guide - Armonia</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .guide-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 80px 20px 40px;
+      background: #0a0a0a;
+    }
+    
+    .guide-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .guide-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    
+    .guide-header h1 {
+      position: static;
+      transform: none;
+      font-size: 2.5em;
+      margin-bottom: 16px;
+    }
+    
+    .guide-header p {
+      color: rgba(255,255,255,0.6);
+      font-size: 1.1em;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .harmony-type {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .harmony-type h2 {
+      font-size: 1.8em;
+      font-weight: 300;
+      margin-bottom: 8px;
+      color: #e8e8e8;
+    }
+    
+    .harmony-emoji {
+      font-size: 2em;
+      margin-right: 12px;
+    }
+    
+    .harmony-type h3 {
+      font-size: 1em;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 20px;
+    }
+    
+    .harmony-type p {
+      color: rgba(255,255,255,0.7);
+      line-height: 1.8;
+      margin-bottom: 20px;
+      font-size: 1.05em;
+    }
+    
+    .harmony-visual {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .color-sample {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    
+    .harmony-tips {
+      background: rgba(255,165,0,0.08);
+      border: 1px solid rgba(255,165,0,0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+    
+    .harmony-tips strong {
+      color: #ffb347;
+      font-weight: 500;
+    }
+    
+    .harmony-tips p {
+      margin: 8px 0 0 0;
+      font-size: 0.95em;
+    }
+    
+    .back-link {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      padding: 10px 18px;
+      font-size: 0.85em;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50px;
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      display: inline-block;
+    }
+    
+    .back-link:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+    }
+    
+    @media (max-width: 768px) {
+      .guide-container {
+        padding: 70px 16px 30px;
+      }
+      
+      .guide-header h1 {
+        font-size: 1.8em;
+      }
+      
+      .guide-header p {
+        font-size: 1em;
+      }
+      
+      .harmony-type {
+        padding: 20px;
+      }
+      
+      .harmony-type h2 {
+        font-size: 1.4em;
+      }
+      
+      .color-sample {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .back-link {
+        top: 16px;
+        left: 16px;
+        font-size: 0.75em;
+        padding: 8px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← Back to Game</a>
+  
+  <div class="guide-container">
+    <div class="guide-content">
+      <div class="guide-header">
+        <h1>Color Harmony Guide</h1>
+        <p>Understanding color relationships to create beautiful, balanced palettes</p>
+      </div>
+      
+      <!-- Complementary -->
+      <div class="harmony-type">
+        <h2><span class="harmony-emoji">🎯</span>Complementary</h2>
+        <h3>Opposite Attraction</h3>
+        <p>
+          Complementary colors sit directly opposite each other on the color wheel (180° apart). 
+          This creates the highest contrast and most vibrant pairing. Think of classic combinations 
+          like blue and orange, red and green, or yellow and purple.
+        </p>
+        <div class="harmony-visual">
+          <div class="color-sample" style="background: #0066cc;"></div>
+          <div class="color-sample" style="background: #ff9933;"></div>
+        </div>
+        <div class="harmony-tips">
+          <strong>Pro Tip:</strong>
+          <p>Use one color as dominant and the other as accent. Avoid using them in equal amounts 
+          as this can feel too intense or vibrating.</p>
+        </div>
+      </div>
+      
+      <!-- Triadic -->
+      <div class="harmony-type">
+        <h2><span class="harmony-emoji">△</span>Triadic</h2>
+        <h3>Triangle Balance</h3>
+        <p>
+          Three colors evenly spaced around the color wheel (120° apart) form a triadic harmony. 
+          This creates a vibrant, balanced palette with rich contrast. Examples include 
+          red-yellow-blue (primary colors) or orange-green-purple (secondary colors).
+        </p>
+        <div class="harmony-visual">
+          <div class="color-sample" style="background: #cc3333;"></div>
+          <div class="color-sample" style="background: #33cc33;"></div>
+          <div class="color-sample" style="background: #3333cc;"></div>
+        </div>
+        <div class="harmony-tips">
+          <strong>Pro Tip:</strong>
+          <p>Let one color dominate while using the other two as accents. This prevents 
+          the palette from feeling too busy or overwhelming.</p>
+        </div>
+      </div>
+      
+      <!-- Analogous -->
+      <div class="harmony-type">
+        <h2><span class="harmony-emoji">🌊</span>Analogous</h2>
+        <h3>Neighbors in Harmony</h3>
+        <p>
+          Colors that sit next to each other on the color wheel create an analogous harmony. 
+          These palettes feel natural, serene, and cohesive because they share similar hues. 
+          Think of a sunset with oranges, reds, and yellows, or an ocean scene with blues and greens.
+        </p>
+        <div class="harmony-visual">
+          <div class="color-sample" style="background: #3366cc;"></div>
+          <div class="color-sample" style="background: #336699;"></div>
+          <div class="color-sample" style="background: #339966;"></div>
+        </div>
+        <div class="harmony-tips">
+          <strong>Pro Tip:</strong>
+          <p>Vary the lightness and saturation to add depth. An all-analogous palette 
+          can feel monotonous without tonal variety.</p>
+        </div>
+      </div>
+      
+      <!-- Split-Complementary -->
+      <div class="harmony-type">
+        <h2><span class="harmony-emoji">🎨</span>Split-Complementary</h2>
+        <h3>Softer Opposition</h3>
+        <p>
+          Instead of using the direct complement, this harmony uses the two colors adjacent 
+          to the complement. This provides strong contrast like complementary colors, but 
+          with less tension and more nuance. It's easier to balance than pure complementary.
+        </p>
+        <div class="harmony-visual">
+          <div class="color-sample" style="background: #3366cc;"></div>
+          <div class="color-sample" style="background: #ccaa33;"></div>
+          <div class="color-sample" style="background: #cc6633;"></div>
+        </div>
+        <div class="harmony-tips">
+          <strong>Pro Tip:</strong>
+          <p>Use the base color as dominant and the split-complements as accents. 
+          This creates visual interest without overwhelming contrast.</p>
+        </div>
+      </div>
+      
+      <!-- Tetradic -->
+      <div class="harmony-type">
+        <h2><span class="harmony-emoji">◇</span>Tetradic</h2>
+        <h3>Four-Corner Balance</h3>
+        <p>
+          Four colors arranged in two complementary pairs create a tetradic (or double-complementary) 
+          harmony. This offers rich, complex palettes with lots of variation. The square variant 
+          uses colors evenly spaced 90° apart for perfect balance.
+        </p>
+        <div class="harmony-visual">
+          <div class="color-sample" style="background: #cc3366;"></div>
+          <div class="color-sample" style="background: #ccaa33;"></div>
+          <div class="color-sample" style="background: #33cc66;"></div>
+          <div class="color-sample" style="background: #3366cc;"></div>
+        </div>
+        <div class="harmony-tips">
+          <strong>Pro Tip:</strong>
+          <p>Choose one color to dominate. With four colors, you risk creating chaos. 
+          Use the others sparingly for accents and highlights.</p>
+        </div>
+      </div>
+      
+      <!-- Monochromatic -->
+      <div class="harmony-type">
+        <h2><span class="harmony-emoji">🎨</span>Monochromatic</h2>
+        <h3>Shades of Unity</h3>
+        <p>
+          A monochromatic palette uses variations of a single hue—different shades (darker), 
+          tints (lighter), and tones (grayer) of the same color. This creates sophisticated, 
+          cohesive designs that feel elegant and unified.
+        </p>
+        <div class="harmony-visual">
+          <div class="color-sample" style="background: #1a4d80;"></div>
+          <div class="color-sample" style="background: #3366aa;"></div>
+          <div class="color-sample" style="background: #4d7fbf;"></div>
+        </div>
+        <div class="harmony-tips">
+          <strong>Pro Tip:</strong>
+          <p>Ensure strong lightness contrast between elements. Without hue variation, 
+          contrast comes from light and dark values.</p>
+        </div>
+      </div>
+      
+      <!-- Additional Tips -->
+      <div class="harmony-type">
+        <h2>💡 General Tips</h2>
+        <h3>Mastering Color Harmony</h3>
+        <p><strong>1. Lightness Matters:</strong> Good color harmony isn't just about hue relationships. 
+        Varying lightness (light vs. dark) is crucial for readability and visual hierarchy.</p>
+        
+        <p><strong>2. Saturation Balance:</strong> Mix vibrant and muted colors. All highly saturated 
+        colors can feel overwhelming, while all muted colors may feel dull.</p>
+        
+        <p><strong>3. The 60-30-10 Rule:</strong> Use 60% dominant color, 30% secondary color, 
+        and 10% accent color for balanced compositions.</p>
+        
+        <p><strong>4. Context is King:</strong> Colors behave differently depending on what's around them. 
+        Test your palette in its intended context.</p>
+        
+        <p><strong>5. Trust Your Eye:</strong> Color theory provides guidelines, not rules. 
+        If something feels right, it probably is!</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
