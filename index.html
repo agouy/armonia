@@ -22,19 +22,21 @@
   <h1 style="display:none;" id="game-title">Armonia</h1>
   
   <div class="container" style="display:none;" id="game">
-    <div class="palette" id="palette-left"></div>
+    <div class="left-panel">
+      <div class="palette-container">
+        <div class="palette" id="palette-left"></div>
+        <div class="palette" id="palette-right"></div>
+      </div>
+    </div>
     
     <div class="center-area">
-      <div class="color-space" id="colorSpace">
-        <div class="color-space-label hue">HUE →</div>
-        <div class="color-space-label lightness">LIGHTNESS</div>
-      </div>
       <div class="dropzone" id="dropzone">
         <div class="color-blend-overlay"></div>
         <div class="slot" data-slot="0"></div>
         <div class="slot" data-slot="1"></div>
         <div class="slot" data-slot="2"></div>
       </div>
+      <canvas id="generativeArt" class="generative-art" width="600" height="300"></canvas>
     </div>
     
     <div class="right-panel">
@@ -50,10 +52,50 @@
           <div>Level: <span id="level">1</span></div>
           <div>Target: <span id="target">70</span></div>
         </div>
-        <button onclick="showHint()" id="hintBtn" class="hint-btn">💡 Show Hint</button>
+        <button onclick="showHint()" id="hintBtn" class="hint-btn">Show Solution</button>
         <button onclick="nextLevel()" id="nextBtn" disabled>Next Level</button>
       </div>
-      <div class="palette" id="palette-right"></div>
+      <div class="color-viz" id="colorViz">
+        <svg viewBox="0 0 200 200" class="color-wheel">
+          <defs>
+            <linearGradient id="red" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(0,85%,65%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(0,85%,50%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="yellow" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(60,85%,65%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(60,85%,50%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="green" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(120,85%,55%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(120,85%,40%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="cyan" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(180,85%,55%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(180,85%,40%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="blue" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(240,85%,65%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(240,85%,50%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="magenta" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(300,85%,65%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(300,85%,50%);stop-opacity:0.3" />
+            </linearGradient>
+          </defs>
+          <g transform="translate(100,100)">
+            <path d="M 0,-85 A 85,85 0 0,1 73.61,-42.5 L 0,0 Z" fill="url(#red)" />
+            <path d="M 73.61,-42.5 A 85,85 0 0,1 73.61,42.5 L 0,0 Z" fill="url(#yellow)" />
+            <path d="M 73.61,42.5 A 85,85 0 0,1 0,85 L 0,0 Z" fill="url(#green)" />
+            <path d="M 0,85 A 85,85 0 0,1 -73.61,42.5 L 0,0 Z" fill="url(#cyan)" />
+            <path d="M -73.61,42.5 A 85,85 0 0,1 -73.61,-42.5 L 0,0 Z" fill="url(#blue)" />
+            <path d="M -73.61,-42.5 A 85,85 0 0,1 0,-85 L 0,0 Z" fill="url(#magenta)" />
+          </g>
+          <circle cx="100" cy="100" r="85" class="wheel-background"/>
+          <g id="wheelMarkers"></g>
+        </svg>
+      </div>
+      <canvas id="generativeArt" class="generative-art" width="240" height="120"></canvas>
     </div>
   </div>
 

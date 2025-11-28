@@ -17,7 +17,7 @@ const gameTitleEl = document.getElementById('game-title');
 const paletteLeftEl = document.getElementById('palette-left');
 const paletteRightEl = document.getElementById('palette-right');
 const dropzoneEl = document.getElementById('dropzone');
-const colorSpaceEl = document.getElementById('colorSpace');
+const colorVizEl = document.getElementById('colorViz');
 const slots = dropzoneEl.querySelectorAll('.slot');
 const scoreEl = document.getElementById('score');
 const scorePanelEl = document.getElementById('score-panel');
@@ -94,7 +94,73 @@ function showComboNotification(harmony) {
     notif.classList.add('show');
     backdrop.classList.add('show');
     discoveredHarmonies.add(harmony.type);
+    
+    // Generate art with current palette
+    const colors = [];
+    slots.forEach(slot => {
+      const hex = rgbToHex(slot.style.backgroundColor);
+      if (hex) colors.push(hex);
+    });
+    if (colors.length > 0) {
+      generateArt(colors);
+    }
   }, 50);
+}
+
+function generateArt(colors) {
+  const canvas = document.getElementById('generativeArt');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  
+  // Clear canvas
+  ctx.clearRect(0, 0, width, height);
+  
+  // Generate flowing organic shapes with more variety for larger canvas
+  const numShapes = 35 + Math.floor(Math.random() * 25);
+  
+  for (let i = 0; i < numShapes; i++) {
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const opacity = 0.3 + Math.random() * 0.4;
+    
+    ctx.fillStyle = color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+    ctx.beginPath();
+    
+    // Random organic blob
+    const centerX = Math.random() * width;
+    const centerY = Math.random() * height;
+    const radius = 20 + Math.random() * 60;
+    const points = 5 + Math.floor(Math.random() * 8);
+    
+    for (let j = 0; j <= points; j++) {
+      const angle = (j / points) * Math.PI * 2;
+      const variation = 0.5 + Math.random() * 0.5;
+      const x = centerX + Math.cos(angle) * radius * variation;
+      const y = centerY + Math.sin(angle) * radius * variation;
+      
+      if (j === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        const prevAngle = ((j - 1) / points) * Math.PI * 2;
+        const prevVariation = 0.5 + Math.random() * 0.5;
+        const prevX = centerX + Math.cos(prevAngle) * radius * prevVariation;
+        const prevY = centerY + Math.sin(prevAngle) * radius * prevVariation;
+        
+        const cpX = (prevX + x) / 2 + (Math.random() - 0.5) * 40;
+        const cpY = (prevY + y) / 2 + (Math.random() - 0.5) * 40;
+        
+        ctx.quadraticCurveTo(cpX, cpY, x, y);
+      }
+    }
+    
+    ctx.closePath();
+    ctx.fill();
+  }
+  
+  // Show canvas with animation
+  canvas.classList.add('show');
 }
 
 function dismissComboNotification() {
@@ -220,7 +286,13 @@ function nextLevel() {
   bestSolution = findBestSolution(levelData.sideColors);
   
   hintBtn.disabled = false;
-  hintBtn.textContent = '💡 Show Hint';
+  hintBtn.textContent = 'Show Solution';
+  
+  // Hide generative art when starting new level
+  const canvas = document.getElementById('generativeArt');
+  if (canvas) {
+    canvas.classList.remove('show');
+  }
   
   playSound(600, 0.3, 'triangle');
 }
@@ -367,33 +439,89 @@ function returnColorToPalette(color) {
   });
 }
 
-function updateColorSpace(colors) {
-  const oldIndicators = colorSpaceEl.querySelectorAll('.harmony-indicator');
-  oldIndicators.forEach(ind => ind.remove());
+function updateColorWheel(colors) {
+  const markersGroup = colorVizEl.querySelector('#wheelMarkers');
+  if (!markersGroup) return;
+  
+  // Clear existing markers
+  markersGroup.innerHTML = '';
   
   if (colors.length === 0) return;
   
-  const width = colorSpaceEl.offsetWidth;
-  const height = colorSpaceEl.offsetHeight;
+  const centerX = 100;
+  const centerY = 100;
+  const radius = 70;
   
   colors.forEach((hex, index) => {
     const oklch = hexToOklch(hex);
-    const hue = oklch.h;
-    const lightness = oklch.L;
+    const hue = oklch.h || 0;
+    const chroma = oklch.C || 0;
+    const lightness = oklch.L || 0.5;
     
-    const x = (hue / 360) * width;
-    const y = (1 - lightness) * height;
+    // Position on wheel based on hue
+    const angle = (hue - 90) * (Math.PI / 180);
+    const distance = Math.min(chroma * radius * 2, radius);
+    const x = centerX + Math.cos(angle) * distance;
+    const y = centerY + Math.sin(angle) * distance;
     
-    const indicator = document.createElement('div');
-    indicator.className = 'harmony-indicator';
-    indicator.style.left = x + 'px';
-    indicator.style.top = y + 'px';
-    indicator.style.backgroundColor = hex;
-    indicator.style.borderColor = lightness > 0.5 ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)';
-    indicator.style.zIndex = 10 + index;
+    // Create marker
+    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    marker.classList.add('wheel-marker');
     
-    colorSpaceEl.appendChild(indicator);
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', 6);
+    circle.setAttribute('fill', hex);
+    
+    marker.appendChild(circle);
+    
+    // Draw line from center if there are multiple colors
+    if (colors.length > 1) {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.classList.add('wheel-line');
+      line.setAttribute('x1', centerX);
+      line.setAttribute('y1', centerY);
+      line.setAttribute('x2', x);
+      line.setAttribute('y2', y);
+      markersGroup.appendChild(line);
+    }
+    
+    markersGroup.appendChild(marker);
   });
+  
+  // Draw connecting lines between colors
+  if (colors.length > 1) {
+    for (let i = 0; i < colors.length; i++) {
+      const hex1 = colors[i];
+      const hex2 = colors[(i + 1) % colors.length];
+      
+      const oklch1 = hexToOklch(hex1);
+      const oklch2 = hexToOklch(hex2);
+      
+      const angle1 = ((oklch1.h || 0) - 90) * (Math.PI / 180);
+      const angle2 = ((oklch2.h || 0) - 90) * (Math.PI / 180);
+      const distance1 = Math.min((oklch1.C || 0) * radius * 2, radius);
+      const distance2 = Math.min((oklch2.C || 0) * radius * 2, radius);
+      
+      const x1 = centerX + Math.cos(angle1) * distance1;
+      const y1 = centerY + Math.sin(angle1) * distance1;
+      const x2 = centerX + Math.cos(angle2) * distance2;
+      const y2 = centerY + Math.sin(angle2) * distance2;
+      
+      const connectionLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      connectionLine.classList.add('wheel-line');
+      connectionLine.setAttribute('x1', x1);
+      connectionLine.setAttribute('y1', y1);
+      connectionLine.setAttribute('x2', x2);
+      connectionLine.setAttribute('y2', y2);
+      connectionLine.style.strokeWidth = '1.5';
+      connectionLine.style.strokeDasharray = 'none';
+      connectionLine.style.stroke = 'rgba(255,255,255,0.25)';
+      
+      markersGroup.insertBefore(connectionLine, markersGroup.firstChild);
+    }
+  }
 }
 
 function updateHarmony() {
@@ -403,7 +531,12 @@ function updateHarmony() {
     if (hex) colors.push(hex);
   });
   
-  updateColorSpace(colors);
+  updateColorWheel(colors);
+  
+  // Generate art whenever we have colors
+  if (colors.length > 0) {
+    generateArt(colors);
+  }
   
   const score = computeHarmonyScore(colors);
   scoreEl.textContent = score;

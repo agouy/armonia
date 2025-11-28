@@ -19,10 +19,10 @@ body {
   right: 0;
   bottom: 0;
   display: flex;
-  gap: 48px;
-  align-items: center;
+  gap: 20px;
+  align-items: stretch;
   justify-content: center;
-  padding: 120px 60px 60px;
+  padding: 100px 20px 20px;
 }
 
 h1 {
@@ -38,6 +38,40 @@ h1 {
   text-transform: uppercase;
   color: #e8e8e8;
   z-index: 10;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.palette-container {
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  padding: 4px;
+}
+
+.left-panel .palette {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  backdrop-filter: none;
+  width: 180px;
+  max-height: none;
+  overflow-y: visible;
+}
+
+.left-panel .palette:last-child {
+  padding-top: 0;
 }
 
 .palette {
@@ -86,81 +120,96 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 36px;
+  justify-content: flex-start;
+  gap: 60px;
   flex: 1;
+  min-width: 0;
+  padding-top: 40px;
 }
 
 .right-panel {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   align-items: stretch;
   flex-shrink: 0;
+  width: 180px;
 }
 
-.color-space {
-  width: 360px;
-  height: 240px;
-  border-radius: 4px;
-  position: relative;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-  border: 1px solid rgba(255,255,255,0.1);
-  background: linear-gradient(to bottom, white 0%, transparent 50%, black 100%),
-              linear-gradient(to right, 
-                #ff0000 0%, 
-                #ffff00 16.67%, 
-                #00ff00 33.33%, 
-                #00ffff 50%, 
-                #0000ff 66.67%, 
-                #ff00ff 83.33%, 
-                #ff0000 100%);
-  overflow: hidden;
+.color-viz {
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.color-space-label {
-  position: absolute;
-  font-size: 0.6em;
-  color: rgba(255,255,255,0.4);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  pointer-events: none;
-  z-index: 5;
+.wheel-background {
+  fill: none;
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 1;
 }
 
-.color-space-label.hue {
-  bottom: 8px;
-  right: 12px;
-}
-
-.color-space-label.lightness {
-  top: 50%;
-  left: 8px;
-  transform: translateY(-50%) rotate(-90deg);
-  transform-origin: left center;
-}
-
-.harmony-indicator {
-  position: absolute;
-  width: 7px;
-  height: 7px;
+.color-wheel {
+  width: 100%;
+  height: auto;
+  max-width: 200px;
+  background: radial-gradient(circle at center,
+    rgba(255,255,255,0.05) 0%,
+    rgba(255,255,255,0.02) 40%,
+    transparent 70%
+  );
   border-radius: 50%;
-  background: white;
-  border: 1.5px solid rgba(0,0,0,0.8);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.6);
-  transform: translate(-50%, -50%);
+}
+
+.wheel-marker {
   transition: all 0.3s ease;
-  z-index: 10;
+}
+
+.wheel-marker circle {
+  stroke: rgba(255,255,255,0.9);
+  stroke-width: 2;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+}
+
+.wheel-line {
+  stroke: rgba(255,255,255,0.15);
+  stroke-width: 1;
+  stroke-dasharray: 2,2;
+}
+
+.generative-art {
+  width: 100%;
+  max-width: 600px;
+  height: 300px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  display: none;
+}
+
+.generative-art.show {
+  display: block;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dropzone {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 20px;
-  padding: 28px;
+  gap: 12px;
+  padding: 24px 32px;
   position: relative;
+  min-height: auto;
 }
 
 .dropzone.success {
@@ -190,16 +239,26 @@ h1 {
 }
 
 .slot {
-  width: 120px;
-  height: 120px;
-  border: 1px dashed rgba(255,255,255,0.15);
+  width: 140px;
+  height: 80px;
+  border: 1px dashed rgba(255,255,255,0.25);
   border-radius: 4px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(255,255,255,0.02);
+  background: rgba(255,255,255,0.04);
   backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.slot:empty::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px dashed rgba(255,255,255,0.15);
+  border-radius: 2px;
 }
 
 .slot.dragover {
@@ -253,7 +312,6 @@ h1 {
   border: 1px solid rgba(255,255,255,0.06);
   backdrop-filter: blur(10px);
   text-align: center;
-  width: 180px;
 }
 
 .score {
@@ -525,7 +583,7 @@ button.hint-btn:disabled {
 @media (max-width: 768px) {
   .container { 
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
     padding: 100px 20px 40px;
     justify-content: flex-start;
   }
@@ -534,31 +592,35 @@ button.hint-btn:disabled {
     font-size: 1.2em;
   }
   
-  .right-panel {
-    flex-direction: column-reverse;
+  .left-panel {
+    flex-direction: row;
+    gap: 12px;
     width: 100%;
   }
   
-  .palette {
-    flex-direction: row;
-    flex-wrap: wrap;
-    max-height: none;
+  .left-panel .palette {
+    width: auto;
+    flex: 1;
+  }
+  
+  .right-panel {
+    flex-direction: column;
     width: 100%;
-    overflow-y: visible;
   }
   
   .center-area {
-    order: -1;
+    order: 0;
+    max-width: 100%;
   }
   
   .dropzone { 
-    gap: 12px; 
+    gap: 10px; 
     padding: 20px; 
   }
   
   .slot { 
-    width: 90px; 
-    height: 90px; 
+    width: 100%;
+    height: 70px; 
   }
   
   .swatch { 
@@ -566,13 +628,17 @@ button.hint-btn:disabled {
     height: 44px; 
   }
   
-  .color-space {
-    width: 280px;
-    height: 180px;
-  }
-  
   .score-panel {
     width: 100%;
     font-size: 0.9em;
+  }
+  
+  .color-viz {
+    max-height: 200px;
+  }
+  
+  .generative-art {
+    max-width: 100%;
+    height: 200px;
   }
 }
