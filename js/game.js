@@ -550,23 +550,28 @@ function handleDragStart(e) {
 
 function handleDragEnd(e) {
   const slotIndex = e.dataTransfer.getData('slotIndex');
-  if (slotIndex && !e.dataTransfer.dropEffect) {
-    const slot = document.querySelector(`[data-slot="${slotIndex}"]`);
-    if (slot) {
-      const color = rgbToHex(slot.style.backgroundColor);
-      if (color) {
-        returnColorToPalette(color);
-        usedColors.delete(color);
+  if (slotIndex) {
+    // Check if drop effect is 'none' (dropped outside valid drop zone)
+    const droppedOutside = e.dataTransfer.dropEffect === 'none';
+    
+    if (droppedOutside) {
+      const slot = document.querySelector(`[data-slot="${slotIndex}"]`);
+      if (slot) {
+        const color = rgbToHex(slot.style.backgroundColor);
+        if (color) {
+          returnColorToPalette(color);
+          usedColors.delete(color);
+        }
+        slot.style.backgroundColor = '';
+        slot.classList.remove('filled');
+        slot.removeAttribute('draggable');
+        slot.dataset.colorId = '';
+        delete slot.dataset.color;
+        delete slot.dataset.slotIndex;
+        
+        playSound(300, 0.2);
+        updateHarmony();
       }
-      slot.style.backgroundColor = '';
-      slot.classList.remove('filled');
-      slot.removeAttribute('draggable');
-      slot.dataset.colorId = '';
-      delete slot.dataset.color;
-      delete slot.dataset.slotIndex;
-      
-      playSound(300, 0.2);
-      updateHarmony();
     }
   }
 }
