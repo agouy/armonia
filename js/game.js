@@ -118,6 +118,26 @@ function generateArt(colors) {
   const canvas = document.getElementById('generativeArt');
   if (!canvas) return;
   
+  // Don't generate if no colors provided
+  if (!colors || colors.length === 0) {
+    canvas.classList.remove('show');
+    return;
+  }
+  
+  // Show canvas first so we can get proper dimensions
+  canvas.classList.add('show');
+  
+  // Resize canvas to match container size
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) {
+    // Canvas not visible yet, try again after a short delay
+    setTimeout(() => generateArt(colors), 50);
+    return;
+  }
+  
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  
   const ctx = canvas.getContext('2d');
   const width = canvas.width;
   const height = canvas.height;
@@ -151,9 +171,6 @@ function generateArt(colors) {
       drawPixelDrift(ctx, width, height, colors);
       break;
   }
-  
-  // Show canvas with animation
-  canvas.classList.add('show');
 }
 
 // Gradient Blend: Smooth single-direction gradient using colors in sequence

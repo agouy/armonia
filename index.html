@@ -10,7 +10,7 @@
   <div id="modal">
     <div class="modal-content">
       <h1>Armonia</h1>
-      <p class="version">v0.3.1</p>
+      <p class="version">v0.3.2</p>
       <p>Compose harmonious color relationships.<br>Drag colors into slots to create balanced combinations.</p>
       <div class="mode-selection">
         <button onclick="startGame()" class="mode-btn active">Mode 1: Harmony</button>
@@ -22,36 +22,24 @@
   <h1 style="display:none;" id="game-title">Armonia</h1>
   
   <div class="container" style="display:none;" id="game">
-    <div class="left-panel">
-      <div class="palette-container">
-        <div class="palette" id="palette-left"></div>
-        <div class="palette" id="palette-right"></div>
+    <div class="top-row">
+      <div class="left-panel">
+        <div class="palette-container">
+          <div class="palette" id="palette-left"></div>
+          <div class="palette" id="palette-right"></div>
+        </div>
       </div>
-    </div>
-    
-    <div class="center-area">
-      <div class="dropzone" id="dropzone">
-        <div class="color-blend-overlay"></div>
-        <div class="slot" data-slot="0"></div>
-        <div class="slot" data-slot="1"></div>
-        <div class="slot" data-slot="2"></div>
+      
+      <div class="center-area">
+        <div class="dropzone" id="dropzone">
+          <div class="color-blend-overlay"></div>
+          <div class="slot" data-slot="0"></div>
+          <div class="slot" data-slot="1"></div>
+          <div class="slot" data-slot="2"></div>
+        </div>
       </div>
-      <div class="art-controls">
-        <label for="artMode">Art Mode:</label>
-        <select id="artMode" class="art-mode-select">
-          <option value="pixels">Pixel Drift</option>
-          <option value="gradient">Gradient Blend</option>
-          <option value="strata">Strata</option>
-          <option value="weave">Weave</option>
-          <option value="flow">Flow Field</option>
-          <option value="constellation">Constellation</option>
-          <option value="ripples">Ripples</option>
-        </select>
-      </div>
-      <canvas id="generativeArt" class="generative-art" width="600" height="300"></canvas>
-    </div>
-    
-    <div class="right-panel">
+      
+      <div class="right-panel">
       <div class="score-panel" id="score-panel">
         <div class="stars" id="stars">
           <span class="star">⭐</span>
@@ -107,7 +95,23 @@
           <g id="wheelMarkers"></g>
         </svg>
       </div>
-      <canvas id="generativeArt" class="generative-art" width="240" height="120"></canvas>
+    </div>
+    </div>
+    
+    <div class="art-section">
+      <div class="art-controls">
+        <label for="artMode">Art Mode:</label>
+        <select id="artMode" class="art-mode-select">
+          <option value="pixels">Pixel Drift</option>
+          <option value="gradient">Gradient Blend</option>
+          <option value="strata">Strata</option>
+          <option value="weave">Weave</option>
+          <option value="flow">Flow Field</option>
+          <option value="constellation">Constellation</option>
+          <option value="ripples">Ripples</option>
+        </select>
+      </div>
+      <canvas id="generativeArt" class="generative-art"></canvas>
     </div>
   </div>
 
