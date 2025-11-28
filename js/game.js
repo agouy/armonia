@@ -47,6 +47,13 @@ export function startGame() {
   scorePanelEl.style.display = 'flex';
   particleSystem = new ParticleSystem(document.body);
   createUIElements();
+  
+  // Add event listener for art mode selector
+  const artModeSelect = document.getElementById('artMode');
+  if (artModeSelect) {
+    artModeSelect.addEventListener('change', updateArtMode);
+  }
+  
   nextLevel();
   resumeAudio();
 }
@@ -118,49 +125,250 @@ function generateArt(colors) {
   // Clear canvas
   ctx.clearRect(0, 0, width, height);
   
-  // Generate flowing organic shapes with more variety for larger canvas
-  const numShapes = 35 + Math.floor(Math.random() * 25);
+  const modeSelect = document.getElementById('artMode');
+  const mode = modeSelect ? modeSelect.value : 'pixels';
   
-  for (let i = 0; i < numShapes; i++) {
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    const opacity = 0.3 + Math.random() * 0.4;
-    
-    ctx.fillStyle = color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
-    ctx.beginPath();
-    
-    // Random organic blob
-    const centerX = Math.random() * width;
-    const centerY = Math.random() * height;
-    const radius = 20 + Math.random() * 60;
-    const points = 5 + Math.floor(Math.random() * 8);
-    
-    for (let j = 0; j <= points; j++) {
-      const angle = (j / points) * Math.PI * 2;
-      const variation = 0.5 + Math.random() * 0.5;
-      const x = centerX + Math.cos(angle) * radius * variation;
-      const y = centerY + Math.sin(angle) * radius * variation;
-      
-      if (j === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        const prevAngle = ((j - 1) / points) * Math.PI * 2;
-        const prevVariation = 0.5 + Math.random() * 0.5;
-        const prevX = centerX + Math.cos(prevAngle) * radius * prevVariation;
-        const prevY = centerY + Math.sin(prevAngle) * radius * prevVariation;
-        
-        const cpX = (prevX + x) / 2 + (Math.random() - 0.5) * 40;
-        const cpY = (prevY + y) / 2 + (Math.random() - 0.5) * 40;
-        
-        ctx.quadraticCurveTo(cpX, cpY, x, y);
-      }
-    }
-    
-    ctx.closePath();
-    ctx.fill();
+  switch(mode) {
+    case 'gradient':
+      drawGradientBlend(ctx, width, height, colors);
+      break;
+    case 'flow':
+      drawFlowField(ctx, width, height, colors);
+      break;
+    case 'strata':
+      drawStrata(ctx, width, height, colors);
+      break;
+    case 'constellation':
+      drawConstellation(ctx, width, height, colors);
+      break;
+    case 'weave':
+      drawWeave(ctx, width, height, colors);
+      break;
+    case 'ripples':
+      drawRipples(ctx, width, height, colors);
+      break;
+    case 'pixels':
+      drawPixelDrift(ctx, width, height, colors);
+      break;
   }
   
   // Show canvas with animation
   canvas.classList.add('show');
+}
+
+// Gradient Blend: Smooth single-direction gradient using colors in sequence
+function drawGradientBlend(ctx, width, height, colors) {
+  if (colors.length === 0) return;
+  
+  // Create linear gradient from top to bottom
+  const gradient = ctx.createLinearGradient(0, 0, 0, height);
+  
+  // Add color stops sequentially
+  colors.forEach((color, i) => {
+    const position = i / (colors.length - 1 || 1);
+    gradient.addColorStop(position, color);
+  });
+  
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+}
+
+// Flow Field: Curved lines following noise-based vector field
+function drawFlowField(ctx, width, height, colors) {
+  const particles = 80;
+  const steps = 100;
+  
+  for (let i = 0; i < particles; i++) {
+    let x = Math.random() * width;
+    let y = Math.random() * height;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    ctx.strokeStyle = color + '40';
+    ctx.lineWidth = 1 + Math.random() * 2;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    
+    for (let j = 0; j < steps; j++) {
+      const angle = (x * 0.01 + y * 0.01 + i * 0.1) * Math.PI;
+      x += Math.cos(angle) * 2;
+      y += Math.sin(angle) * 2;
+      
+      if (x < 0 || x > width || y < 0 || y > height) break;
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+}
+
+// Strata: Horizontal geological-like layers
+function drawStrata(ctx, width, height, colors) {
+  const layers = 15 + Math.floor(Math.random() * 10);
+  let y = 0;
+  
+  for (let i = 0; i < layers; i++) {
+    const color = colors[i % colors.length];
+    const layerHeight = (height - y) / (layers - i) * (0.7 + Math.random() * 0.6);
+    
+    ctx.fillStyle = color + Math.floor((0.3 + Math.random() * 0.4) * 255).toString(16).padStart(2, '0');
+    
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    
+    // Create organic edge with noise
+    const segments = 30;
+    for (let j = 0; j <= segments; j++) {
+      const x = (j / segments) * width;
+      const noise = Math.sin(j * 0.5 + i) * 8;
+      ctx.lineTo(x, y + noise);
+    }
+    
+    ctx.lineTo(width, y + layerHeight);
+    ctx.lineTo(0, y + layerHeight);
+    ctx.closePath();
+    ctx.fill();
+    
+    y += layerHeight;
+  }
+}
+
+// Constellation: Connected dots forming networks
+function drawConstellation(ctx, width, height, colors) {
+  const points = [];
+  const numPoints = 40 + Math.floor(Math.random() * 30);
+  
+  // Generate points
+  for (let i = 0; i < numPoints; i++) {
+    points.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+  
+  // Draw connections
+  const maxDist = 120;
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      const dx = points[j].x - points[i].x;
+      const dy = points[j].y - points[i].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      if (dist < maxDist) {
+        const opacity = (1 - dist / maxDist) * 0.3;
+        ctx.strokeStyle = points[i].color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineTo(points[j].x, points[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  
+  // Draw points
+  points.forEach(p => {
+    ctx.fillStyle = p.color + 'CC';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2 + Math.random() * 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+// Weave: Interlocking curved bands
+function drawWeave(ctx, width, height, colors) {
+  const bands = 8 + Math.floor(Math.random() * 4);
+  
+  for (let i = 0; i < bands; i++) {
+    const color = colors[i % colors.length];
+    const isHorizontal = i % 2 === 0;
+    const offset = (i / bands) * (isHorizontal ? height : width);
+    
+    ctx.strokeStyle = color + '60';
+    ctx.lineWidth = 15 + Math.random() * 15;
+    ctx.beginPath();
+    
+    if (isHorizontal) {
+      const y = offset;
+      for (let x = 0; x < width; x += 5) {
+        const wave = Math.sin(x * 0.02 + i) * 20;
+        if (x === 0) ctx.moveTo(x, y + wave);
+        else ctx.lineTo(x, y + wave);
+      }
+    } else {
+      const x = offset;
+      for (let y = 0; y < height; y += 5) {
+        const wave = Math.sin(y * 0.02 + i) * 20;
+        if (y === 0) ctx.moveTo(x + wave, y);
+        else ctx.lineTo(x + wave, y);
+      }
+    }
+    ctx.stroke();
+  }
+}
+
+// Ripples: Concentric circles from random points
+function drawRipples(ctx, width, height, colors) {
+  const centers = 4 + Math.floor(Math.random() * 3);
+  
+  for (let i = 0; i < centers; i++) {
+    const cx = Math.random() * width;
+    const cy = Math.random() * height;
+    const color = colors[i % colors.length];
+    const maxRadius = 80 + Math.random() * 100;
+    const rings = 8 + Math.floor(Math.random() * 8);
+    
+    for (let j = 0; j < rings; j++) {
+      const radius = (j / rings) * maxRadius;
+      const opacity = 0.5 - (j / rings) * 0.4;
+      
+      ctx.strokeStyle = color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+}
+
+// Pixel Drift: Scattered rectangular pixels in motion
+function drawPixelDrift(ctx, width, height, colors) {
+  const pixels = 200 + Math.floor(Math.random() * 150);
+  
+  for (let i = 0; i < pixels; i++) {
+    const x = Math.random() * width;
+    const y = Math.random() * height;
+    const size = 3 + Math.random() * 12;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const opacity = 0.3 + Math.random() * 0.5;
+    
+    ctx.fillStyle = color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+    
+    // Slight rotation for drift effect
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(Math.random() * 0.4 - 0.2);
+    ctx.fillRect(-size/2, -size/2, size, size);
+    ctx.restore();
+  }
+}
+
+export function updateArtMode() {
+  // Regenerate art with current colors when mode changes
+  const colors = [];
+  slots.forEach(slot => {
+    const hex = rgbToHex(slot.style.backgroundColor);
+    if (hex) colors.push(hex);
+  });
+  // Generate art even if no colors yet (will use default colors)
+  if (colors.length === 0) {
+    // Use default palette colors from level
+    if (levelData && levelData.sideColors) {
+      colors.push(...levelData.sideColors.slice(0, 3));
+    }
+  }
+  if (colors.length > 0) {
+    generateArt(colors);
+  }
 }
 
 function dismissComboNotification() {

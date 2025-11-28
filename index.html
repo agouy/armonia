@@ -10,7 +10,7 @@
   <div id="modal">
     <div class="modal-content">
       <h1>Armonia</h1>
-      <p class="version">v0.2.0</p>
+      <p class="version">v0.3.0</p>
       <p>Compose harmonious color relationships.<br>Drag colors into slots to create balanced combinations.</p>
       <div class="mode-selection">
         <button onclick="startGame()" class="mode-btn active">Mode 1: Harmony</button>
@@ -35,6 +35,18 @@
         <div class="slot" data-slot="0"></div>
         <div class="slot" data-slot="1"></div>
         <div class="slot" data-slot="2"></div>
+      </div>
+      <div class="art-controls">
+        <label for="artMode">Art Mode:</label>
+        <select id="artMode" class="art-mode-select">
+          <option value="pixels">Pixel Drift</option>
+          <option value="gradient">Gradient Blend</option>
+          <option value="strata">Strata</option>
+          <option value="weave">Weave</option>
+          <option value="flow">Flow Field</option>
+          <option value="constellation">Constellation</option>
+          <option value="ripples">Ripples</option>
+        </select>
       </div>
       <canvas id="generativeArt" class="generative-art" width="600" height="300"></canvas>
     </div>

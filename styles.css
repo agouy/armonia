@@ -127,6 +127,44 @@ h1 {
   padding-top: 40px;
 }
 
+.art-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+
+.art-mode-select {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  color: #e8e8e8;
+  padding: 6px 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9em;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.art-mode-select option {
+  background: #1a1a1a;
+  color: #e8e8e8;
+}
+
+.art-mode-select:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.art-mode-select:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.4);
+}
+
 .right-panel {
   display: flex;
   flex-direction: column;
