@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armonia - Stokastik</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="modal" style="display:none;"></div>
+  <a href="index.html" class="back-to-menu" id="backToMenuBtnStokastik" style="display:block; text-decoration: none;">← Menu</a>
+
+  <div class="stokastik-container" id="stokastik" style="display:flex;">
+    <div class="stokastik-header">
+      <h2>Stokastik</h2>
+      <p class="stokastik-subtitle">Chaos to Order • Find the Harmony</p>
+    </div>
+    
+      <div class="stokastik-main">
+        <div class="stokastik-controls-top">
+          <div class="score-display">
+              <span>Harmony Score: </span>
+              <span id="stokastikScore">0</span>
+          </div>
+          <div class="harmony-meter small">
+              <div class="meter-bar">
+                  <div class="meter-fill" id="stokastikMeter"></div>
+              </div>
+          </div>
+        </div>
+  
+        <div class="canvas-container" style="position: relative; width: 100%; flex: 1;">
+          <canvas id="stokastikCanvas" class="stokastik-canvas"></canvas>
+          <div id="trashBin" class="trash-bin">🗑️ <span class="trash-label">Drag here to remove</span></div>
+        </div>
+        
+        <div class="stokastik-controls-bottom">
+        <div class="unit-factory">
+          <div class="factory-header">
+            <span>Factory</span>
+            <div class="mode-toggle">
+              <button class="mode-switch active" id="modeUnitBtn">Units</button>
+              <button class="mode-switch" id="modeFieldBtn">Fields</button>
+            </div>
+          </div>
+          
+          <!-- Unit Controls -->
+          <div class="factory-controls" id="unitControls">
+            <div class="control-group">
+              <label>Timbre</label>
+              <div class="shape-selector" id="shapeSelector">
+                <button class="shape-btn active" data-shape="circle" title="Sine Wave">●</button>
+                <button class="shape-btn" data-shape="square" title="Square Wave">■</button>
+                <button class="shape-btn" data-shape="triangle" title="Triangle Wave">▲</button>
+              </div>
+            </div>
+            <div class="control-group">
+              <label>Scale</label>
+              <select id="factoryScale" class="scale-select">
+                <option value="major">Major</option>
+                <option value="minor">Minor</option>
+                <option value="pentaMaj">Penta Maj</option>
+                <option value="pentaMin">Penta Min</option>
+                <option value="chromatic">Chromatic</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label>Degree</label>
+              <input type="range" id="factoryDegree" class="degree-slider" min="1" max="8" value="1" step="1">
+              <div class="value-label" id="degreeLabel">1 (Root)</div>
+            </div>
+            <div class="control-group">
+              <label>Rhythm</label>
+              <input type="range" id="factorySpeed" class="speed-slider" min="1" max="5" value="3" step="1">
+              <div class="value-label" id="rhythmLabel">1/4</div>
+            </div>
+            <button id="createUnitBtn" class="action-btn primary">Create Unit</button>
+          </div>
+
+          <!-- Field Controls -->
+          <div class="factory-controls" id="fieldControls" style="display: none;">
+            <div class="control-group">
+              <label>Type</label>
+              <div class="shape-selector" id="fieldSelector">
+                <button class="field-btn active" data-field="gravity" title="Gravity Well">◎</button>
+                <button class="field-btn" data-field="silence" title="Silence Zone">🔇</button>
+                <button class="field-btn" data-field="speed" title="Speed Boost">⚡</button>
+              </div>
+            </div>
+            <button id="createFieldBtn" class="action-btn primary">Create Field</button>
+          </div>
+        </div>
+        
+        <div class="global-controls">
+          <div class="tempo-control">
+            <label>Tempo: <span id="bpmDisplay">120</span> BPM</label>
+            <input type="range" id="bpmSlider" min="60" max="200" value="120">
+          </div>
+          <button id="toggleStokastikSound" class="sound-btn">🔊 Start</button>
+          <button id="clearShapesBtn" class="action-btn">Clear All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { startStokastik } from './js/stokastik/stokastik.js';
+    
+    startStokastik();
+  </script>
+</body>
+</html>

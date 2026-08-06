@@ -1,9 +1,9 @@
 // Main Game Logic
-import { playSound, resumeAudio } from './audio.js';
-import { rgbToHex, hexToOklch } from './color-utils.js';
-import { computeHarmonyScore } from './harmony.js';
+import { playSound, resumeAudio } from '../common/audio.js';
+import { rgbToHex, hexToOklch } from '../common/color-utils.js';
+import { computeHarmonyScore } from '../common/harmony.js';
 import { generateLevel } from './level-generator.js';
-import { detectHarmonyType } from './harmony-detector.js';
+import { detectHarmonyType } from '../common/harmony-detector.js';
 import { ParticleSystem } from './particles.js';
 
 // Game State

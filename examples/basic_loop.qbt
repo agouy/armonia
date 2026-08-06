@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "bpm": 120,
+  "nodes": [
+    {
+      "id": "src1",
+      "type": "source",
+      "x": 100,
+      "y": 300,
+      "props": {
+        "interval": 2,
+        "noteIndex": 5,
+        "prob": 0.5,
+        "timbre": 0,
+        "cutoff": 20000,
+        "shift": 2,
+        "wave": "sine",
+        "attack": 0.01,
+        "decay": 0.4
+      }
+    },
+    {
+      "id": "emit1",
+      "type": "emitter",
+      "x": 500,
+      "y": 300,
+      "props": {
+        "interval": 2,
+        "noteIndex": -1,
+        "prob": 0.5,
+        "timbre": 0,
+        "cutoff": 20000,
+        "shift": 2,
+        "wave": "sine",
+        "attack": 0.01,
+        "decay": 0.4
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "src1",
+      "to": "emit1"
+    }
+  ]
+}

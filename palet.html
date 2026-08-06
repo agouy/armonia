@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armonia - Palèt</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="modal" style="display:none;"></div>
+  <h1 id="game-title">Armonia</h1>
+  <a href="index.html" class="back-to-menu" id="backToMenuBtn" style="display:block; text-decoration: none;">← Menu</a>
+  
+  <!-- Art mode selector in top left -->
+  <div class="art-mode-container" id="artModeContainer" style="display:block;">
+    <select id="artMode" class="art-mode-select">
+      <option value="pixels">Pixel Drift</option>
+      <option value="gradient">Gradient Blend</option>
+      <option value="strata">Strata</option>
+      <option value="weave">Weave</option>
+      <option value="flow">Flow Field</option>
+      <option value="constellation">Constellation</option>
+      <option value="ripples">Ripples</option>
+    </select>
+  </div>
+  
+  <!-- Background art canvas -->
+  <canvas id="generativeArt" class="generative-art-bg" style="display:block;"></canvas>
+  
+  <div class="container" id="game" style="display:flex;">
+    <div class="top-row">
+      <div class="right-panel">
+      <div class="score-panel" id="score-panel" style="display:flex;">
+        <div class="stars" id="stars">
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+        </div>
+        <div class="score" id="score">0</div>
+        <div class="progress"><div class="progress-bar" id="progress"></div></div>
+        <div class="level-info">
+          <div>Level: <span id="level">1</span></div>
+          <div>Target: <span id="target">70</span></div>
+        </div>
+        <button id="hintBtn" class="hint-btn">Show Solution</button>
+      </div>
+    </div>
+    </div>
+    
+    <div class="left-panel">
+      <div class="palette-container">
+        <div class="palette" id="palette-left"></div>
+        <div class="palette" id="palette-right"></div>
+      </div>
+      
+      <div class="dropzone-container">
+        <div class="dropzone-hint">Build your harmony</div>
+        <div class="dropzone" id="dropzone">
+          <div class="color-blend-overlay"></div>
+          <div class="slot" data-slot="0"></div>
+          <div class="slot" data-slot="1"></div>
+          <div class="slot" data-slot="2"></div>
+        </div>
+      </div>
+      <div class="color-viz" id="colorViz">
+        <svg viewBox="0 0 200 200" class="color-wheel">
+          <defs>
+            <linearGradient id="red" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(0,85%,65%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(0,85%,50%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="yellow" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(60,85%,65%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(60,85%,50%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="green" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(120,85%,55%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(120,85%,40%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="cyan" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(180,85%,55%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(180,85%,40%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="blue" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(240,85%,65%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(240,85%,50%);stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="magenta" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" style="stop-color:hsl(300,85%,65%);stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:hsl(300,85%,50%);stop-opacity:0.3" />
+            </linearGradient>
+          </defs>
+          <g transform="translate(100,100)">
+            <path d="M 0,-85 A 85,85 0 0,1 73.61,-42.5 L 0,0 Z" fill="url(#red)" />
+            <path d="M 73.61,-42.5 A 85,85 0 0,1 73.61,42.5 L 0,0 Z" fill="url(#yellow)" />
+            <path d="M 73.61,42.5 A 85,85 0 0,1 0,85 L 0,0 Z" fill="url(#green)" />
+            <path d="M 0,85 A 85,85 0 0,1 -73.61,42.5 L 0,0 Z" fill="url(#cyan)" />
+            <path d="M -73.61,42.5 A 85,85 0 0,1 -73.61,-42.5 L 0,0 Z" fill="url(#blue)" />
+            <path d="M -73.61,-42.5 A 85,85 0 0,1 0,-85 L 0,0 Z" fill="url(#magenta)" />
+          </g>
+          <circle cx="100" cy="100" r="85" class="wheel-background"/>
+          <g id="wheelMarkers"></g>
+        </svg>
+      </div>
+    </div>
+    
+    <button id="nextBtn" style="display: none;">Next Level →</button>
+  </div>
+
+  <script type="module">
+    import { startGame, advanceToNextLevel, showHint, updateArtMode } from './js/palet/game.js';
+    
+    // Expose global functions for onclick handlers if any remain
+    window.nextLevel = advanceToNextLevel;
+    window.advanceToNextLevel = advanceToNextLevel;
+    window.showHint = showHint;
+    window.updateArtMode = updateArtMode;
+    
+    // Initialize game
+    startGame();
+    
+    // Bind buttons that might have lost their onclick attributes or need re-binding
+    const hintBtn = document.getElementById('hintBtn');
+    if(hintBtn) hintBtn.onclick = showHint;
+    
+    const nextBtn = document.getElementById('nextBtn');
+    if(nextBtn) nextBtn.onclick = advanceToNextLevel;
+    
+  </script>
+</body>
+</html>

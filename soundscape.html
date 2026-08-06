@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armonia - SoundScape</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="modal" style="display:none;"></div>
+  <a href="index.html" class="back-to-menu" id="backToMenuBtnSoundscape" style="display:block; text-decoration: none;">← Menu</a>
+  
+  <div class="soundscape-container" id="soundscape" style="display:flex;">
+    <div class="soundscape-header">
+      <h2>SoundScape</h2>
+      <p class="soundscape-subtitle">Move colors toward harmony • Watch noise become music</p>
+    </div>
+    
+    <div class="soundscape-main">
+      <div class="color-pickers">
+        <div class="picker-group">
+          <div class="color-picker-wrapper">
+            <div class="color-orb" id="orb1" style="background: #ff4444;"></div>
+            <input type="range" id="hue1" class="hue-slider" min="0" max="360" value="0">
+            <div class="picker-label">Voice 1</div>
+          </div>
+          <div class="color-picker-wrapper">
+            <div class="color-orb" id="orb2" style="background: #44ff44;"></div>
+            <input type="range" id="hue2" class="hue-slider" min="0" max="360" value="120">
+            <div class="picker-label">Voice 2</div>
+          </div>
+          <div class="color-picker-wrapper">
+            <div class="color-orb" id="orb3" style="background: #4444ff;"></div>
+            <input type="range" id="hue3" class="hue-slider" min="0" max="360" value="240">
+            <div class="picker-label">Voice 3</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="harmony-display">
+        <div class="harmony-meter">
+          <div class="meter-label">Dissonance</div>
+          <div class="meter-bar">
+            <div class="meter-fill" id="harmonyMeter"></div>
+          </div>
+          <div class="meter-label">Harmony</div>
+        </div>
+        <div class="harmony-type" id="harmonyType">Exploring...</div>
+      </div>
+      
+      <canvas id="soundscapeCanvas" class="soundscape-canvas"></canvas>
+    </div>
+    
+    <div class="soundscape-controls">
+      <button id="toggleSound" class="sound-btn">🔊 Sound On</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { startSoundscape } from './js/soundscape/soundscape.js';
+    
+    startSoundscape();
+  </script>
+</body>
+</html>

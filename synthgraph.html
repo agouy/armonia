@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armonia - SynthGraph</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --bg-color: #121212;
+      --panel-bg: #1e1e1e;
+      --accent: #bb86fc;
+      --text: #e0e0e0;
+    }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      overflow: hidden;
+    }
+    .graph-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+    .canvas-wrapper {
+      flex: 1;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    
+    /* Floating Toolbar */
+    .floating-toolbar {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+    .toolbar-btn {
+      background: rgba(30, 30, 30, 0.9);
+      border: 1px solid #444;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      backdrop-filter: blur(5px);
+    }
+    .toolbar-btn:hover {
+      background: rgba(60, 60, 60, 0.9);
+      border-color: var(--accent);
+    }
+    .toolbar-btn.primary {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+    .toolbar-select {
+      background: rgba(30, 30, 30, 0.9);
+      border: 1px solid #444;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      backdrop-filter: blur(5px);
+    }
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(30, 30, 30, 0.9);
+      border: 1px solid #444;
+      padding: 6px 12px;
+      border-radius: 6px;
+      backdrop-filter: blur(5px);
+    }
+    .speed-control label {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+    .toolbar-input {
+      background: #222;
+      border: 1px solid #555;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      width: 60px;
+      font-size: 0.85rem;
+    }
+    
+    /* Property Panel (Floating) */
+    .prop-panel {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 220px;
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 15px;
+      z-index: 10;
+      backdrop-filter: blur(5px);
+    }
+    .prop-header {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+    .prop-content {
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+    .prop-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .prop-row label {
+      flex: 1;
+    }
+    .prop-row input, .prop-row select {
+      flex: 1;
+      background: #333;
+      border: 1px solid #444;
+      color: white;
+      padding: 4px 6px;
+      border-radius: 3px;
+      max-width: 90px;
+    }
+    
+    /* Tunnel sub-node sections */
+    .prop-section {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #444;
+    }
+    .prop-label {
+      color: #00bcd4;
+      font-size: 0.75rem;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    /* Waveform Preview */
+    .waveform-preview {
+      margin-top: 12px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .waveform-preview canvas {
+      display: block;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    
+    /* Context Menu */
+    .context-menu {
+      position: absolute;
+      background: rgba(35, 35, 35, 0.98);
+      border: 1px solid #555;
+      border-radius: 6px;
+      padding: 6px 0;
+      min-width: 150px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      z-index: 1000;
+      display: none;
+      backdrop-filter: blur(10px);
+    }
+    .menu-item {
+      padding: 10px 18px;
+      cursor: pointer;
+      color: #e0e0e0;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    .menu-item:hover {
+      background: var(--accent);
+      color: #000;
+    }
+    .menu-separator {
+      height: 1px;
+      background: #444;
+      margin: 5px 0;
+    }
+    .menu-label {
+      padding: 6px 18px;
+      color: #888;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    /* Info Panel */
+    .info-panel {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      background: rgba(30, 30, 30, 0.8);
+      padding: 12px 18px;
+      border-radius: 6px;
+      pointer-events: none;
+      font-size: 0.8rem;
+      color: #888;
+      backdrop-filter: blur(5px);
+    }
+    .info-panel a {
+      color: #888;
+      pointer-events: auto;
+    }
+    
+    /* Hide file input */
+    #fileInput { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Context Menu -->
+  <div id="context-menu" class="context-menu">
+    <div class="menu-item" id="ctx-link">Link Node</div>
+    <div class="menu-item" id="ctx-group">Group (Ctrl+G)</div>
+    <div class="menu-item" id="ctx-delete">Delete</div>
+    <div id="ctx-add-submenu">
+      <div class="menu-separator"></div>
+      <div class="menu-label">Add Node</div>
+      <div class="menu-item ctx-add-node" data-type="source">⚡ Source</div>
+      <div class="menu-item ctx-add-node" data-type="emitter">🔊 Emitter</div>
+      <div class="menu-item ctx-add-node" data-type="pitch">🎵 Pitch</div>
+      <div class="menu-item ctx-add-node" data-type="delay">🕒 Delay</div>
+      <div class="menu-item ctx-add-node" data-type="splitter">🔀 Splitter</div>
+      <div class="menu-item ctx-add-node" data-type="gate">🚪 Gate</div>
+      <div class="menu-item ctx-add-node" data-type="filter">🌊 Filter</div>
+      <div class="menu-item ctx-add-node" data-type="polariser">🔮 Polariser</div>
+      <div class="menu-item ctx-add-node" data-type="chord">🎹 Chord</div>
+      <div class="menu-item ctx-add-node" data-type="tunnel">🚇 Tunnel (Empty)</div>
+      <div class="menu-separator"></div>
+      <div class="menu-label">Tunnel Presets</div>
+      <div class="menu-item ctx-add-tunnel" data-template="voice">🎤 Voice (Pitch+Synth)</div>
+      <div class="menu-item ctx-add-tunnel" data-template="thick">🎸 Thick (+Octave)</div>
+      <div class="menu-item ctx-add-tunnel" data-template="dark">🌑 Dark (Filter+Low)</div>
+    </div>
+  </div>
+
+  <div class="graph-container">
+    <div class="canvas-wrapper">
+      <canvas id="synthCanvas"></canvas>
+      
+      <!-- Floating Toolbar -->
+      <div class="floating-toolbar">
+        <button id="playBtn" class="toolbar-btn primary">▶ Play</button>
+        <button id="muteBtn" class="toolbar-btn">🔊</button>
+        <div class="speed-control">
+          <label for="speedInput">Speed</label>
+          <input type="number" id="speedInput" class="toolbar-input" min="20" max="300" value="120">
+        </div>
+        <select id="exampleSelect" class="toolbar-select">
+          <option value="">Examples...</option>
+          <option value="sequential_melody">Sequential Melody</option>
+          <option value="manual_loop">Manual Loop</option>
+          <option value="generative_ambient">Generative Ambient</option>
+          <option value="polyrhythm">Polyrhythm</option>
+          <option value="chord_progression">Chord Progression</option>
+          <option value="drum_pattern">Drum Pattern</option>
+          <option value="arpeggio">Arpeggio</option>
+          <option disabled>── Layered Instruments ──</option>
+          <option value="layered_pad">Layered Pad</option>
+          <option value="synth_bass">Synth Bass</option>
+          <option value="organ">Organ</option>
+          <option value="pluck_strings">Pluck Strings</option>
+        </select>
+        <button id="saveBtn" class="toolbar-btn">💾 Download</button>
+        <button id="loadBtn" class="toolbar-btn">📂 Load</button>
+        <button id="clearBtn" class="toolbar-btn">🗑️ Clear</button>
+      </div>
+      <input type="file" id="fileInput" accept=".qbt,.json">
+      
+      <!-- Property Panel -->
+      <div id="node-properties" class="prop-panel">
+        <div class="prop-header">Properties</div>
+        <div id="prop-content" class="prop-content">
+          Right-click to add nodes
+        </div>
+      </div>
+      
+      <!-- Info Panel -->
+      <div class="info-panel">
+        <a href="index.html">← Back</a> &nbsp;|&nbsp; Right-click: Add nodes &nbsp;|&nbsp; Shift+Drag: Box select &nbsp;|&nbsp; Ctrl+G: Group into Tunnel
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initSynthGraph } from './js/synthgraph/synthgraph.js';
+    initSynthGraph();
+  </script>
+</body>
+</html>

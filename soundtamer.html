@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armonia - SoundTamer</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .tool-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tool-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .tool-btn.active {
+      border-color: #4ecdc4;
+      background: rgba(78, 205, 196, 0.2);
+      box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+    }
+    .goal-display {
+      background: rgba(0,0,0,0.3);
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-left: 20px;
+      font-family: monospace;
+      font-size: 1.2em;
+    }
+    .goal-progress {
+      height: 4px;
+      background: #333;
+      margin-top: 5px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .goal-bar {
+      height: 100%;
+      background: #4ecdc4;
+      width: 0%;
+      transition: width 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-to-menu" style="display:block; text-decoration: none;">← Menu</a>
+
+  <div class="stokastik-container" style="display:flex;">
+    <div class="stokastik-header">
+      <h2>SoundTamer</h2>
+      <p class="stokastik-subtitle">Tame the Chaos • Build an Ecosystem</p>
+    </div>
+    
+      <div class="stokastik-main">
+        <div class="stokastik-controls-top">
+          <div class="score-display">
+              <span>Harmony: </span>
+              <span id="harmonyScore">0</span>%
+          </div>
+          <div class="harmony-meter small">
+              <div class="meter-bar">
+                  <div class="meter-fill" id="harmonyMeter"></div>
+              </div>
+          </div>
+          <div class="goal-display">
+            <div>Sustain Harmony: <span id="timerDisplay">0.0</span>s / 60s</div>
+            <div class="goal-progress">
+              <div class="goal-bar" id="goalBar"></div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="canvas-container" style="position: relative; width: 100%; flex: 1;">
+          <canvas id="gameCanvas" class="stokastik-canvas"></canvas>
+          <div id="trashBin" class="trash-bin">🗑️ <span class="trash-label">Drag here to remove</span></div>
+        </div>
+        
+        <div class="stokastik-controls-bottom">
+        <div class="unit-factory">
+          <div class="factory-header">
+            <span>Tools</span>
+          </div>
+          
+          <div class="factory-controls" style="flex-direction: row; gap: 10px; flex-wrap: wrap;">
+            <button class="tool-btn active" data-tool="source" title="Source: Generates particles">🌱</button>
+            <button class="tool-btn" data-tool="resonator" title="Resonator: Plays sound">🔔</button>
+            <button class="tool-btn" data-tool="filter" title="Filter: Harmonizes color">🌈</button>
+            <button class="tool-btn" data-tool="polariser" title="Polariser: Adds timbre/harmonics">🔮</button>
+            <button class="tool-btn" data-tool="splitter" title="Splitter: Distributes flow">🔀</button>
+          </div>
+          
+          <div class="control-group" style="margin-top: 10px;">
+             <label id="toolDescription">Source: Generates particles periodically. Drag from it to connect.</label>
+          </div>
+        </div>
+        
+        <div class="global-controls">
+          <button id="toggleSound" class="sound-btn">🔊 Start Audio</button>
+          <button id="clearBtn" class="action-btn">Clear All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { startSoundTamer } from './js/soundtamer/soundtamer.js';
+    startSoundTamer();
+  </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "version": "1.0",
+  "bpm": 120,
+  "nodes": [
+    {
+      "id": "src1",
+      "type": "source",
+      "x": 100,
+      "y": 300,
+      "props": {
+        "interval": 2,
+        "noteIndex": 5,
+        "prob": 0.5,
+        "timbre": 0,
+        "cutoff": 20000,
+        "shift": 2,
+        "wave": "sine",
+        "attack": 0.01,
+        "decay": 0.4
+      }
+    },
+    {
+      "id": "pol1",
+      "type": "polariser",
+      "x": 300,
+      "y": 300,
+      "props": {
+        "interval": 2,
+        "noteIndex": -1,
+        "prob": 0.5,
+        "timbre": 0,
+        "cutoff": 20000,
+        "shift": 2,
+        "wave": "sawtooth",
+        "attack": 0.1,
+        "decay": 1.0
+      }
+    },
+    {
+      "id": "pol2",
+      "type": "polariser",
+      "x": 500,
+      "y": 300,
+      "props": {
+        "interval": 2,
+        "noteIndex": -1,
+        "prob": 0.5,
+        "timbre": 0,
+        "cutoff": 20000,
+        "shift": 2,
+        "wave": "square",
+        "attack": 0.01,
+        "decay": 0.2
+      }
+    },
+    {
+      "id": "emit1",
+      "type": "emitter",
+      "x": 700,
+      "y": 300,
+      "props": {
+        "interval": 2,
+        "noteIndex": -1,
+        "prob": 0.5,
+        "timbre": 0,
+        "cutoff": 20000,
+        "shift": 2,
+        "wave": "sine",
+        "attack": 0.01,
+        "decay": 0.4
+      }
+    }
+  ],
+  "edges": [
+    { "id": "e1", "from": "src1", "to": "pol1" },
+    { "id": "e2", "from": "pol1", "to": "pol2" },
+    { "id": "e3", "from": "pol2", "to": "emit1" }
+  ]
+}

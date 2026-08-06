@@ -1,7 +1,7 @@
 // Soundscape Mode - Audio-Visual Harmony Explorer
-import { hexToOklch } from './color-utils.js';
-import { computeHarmonyScore } from './harmony.js';
-import { detectHarmonyType } from './harmony-detector.js';
+import { hexToOklch } from '../common/color-utils.js';
+import { computeHarmonyScore } from '../common/harmony.js';
+import { detectHarmonyType } from '../common/harmony-detector.js';
 
 let audioContext = null;
 let oscillators = [];

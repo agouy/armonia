@@ -1,6 +1,6 @@
 // Level and Palette Generation
-import { hslToHex, hexToOklch } from './color-utils.js';
-import { computeHarmonyScore } from './harmony.js';
+import { hslToHex, hexToOklch } from '../common/color-utils.js';
+import { computeHarmonyScore } from '../common/harmony.js';
 
 function randomHSL() {
   const h = Math.random() * 360;
